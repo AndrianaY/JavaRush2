@@ -24,11 +24,18 @@ public class Solution {
         @Override
         public int compare(T o1, T o2)
         {
+            int result = 0;
             for (Comparator<T> comp: compar)
             {
-//                Collections.sort(T, comp);
+                result = comp.compare(o1, o2);
+                if (result != 0)
+                {
+                    break;
+                }
             }
-            return 0;
+            return result;
         }
     }
+
+
 }
