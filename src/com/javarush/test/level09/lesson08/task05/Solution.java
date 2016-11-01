@@ -6,8 +6,6 @@ package com.javarush.test.level09.lesson08.task05;
 Можно использовать только один блок try..
 */
 
-import static com.sun.xml.internal.ws.model.RuntimeModeler.BEAN;
-
 public class Solution
 {
     public static void main(String[] args) {
@@ -18,21 +16,20 @@ public class Solution
         try
         {
             obj.method1();
+        }
+        catch (NullPointerException e)
+        {
             obj.method2();
+        }
+        catch (IndexOutOfBoundsException e){
             obj.method3();
         }
-        catch (NumberFormatException e2){
-            printStack(e2);
+        catch (NumberFormatException e){
+            e.fillInStackTrace();
         }
-        catch (IndexOutOfBoundsException e1){
-            printStack(e1);
+        finally
+        {
         }
-        catch (NullPointerException e){
-
-            printStack(e);
-        }
-
-
     }
 
     public static void printStack(Throwable throwable) {

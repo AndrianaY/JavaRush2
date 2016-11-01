@@ -1,33 +1,224 @@
 package com.javarush.test.level25.lesson16.big01;
-import java.util.ArrayList;
+//И еще немного:
+//
+//        Напиши метод createUfo()
+//        Если список НЛО пуст - создай один корабль в центре сверху.
+//
+//        Напиши метод checkBombs()
+//        Надо проверить - не пересеклись между собой какая-нибудь бомба и корабль.
+//        Если пересеклись - корабль и бомба умирают  - die()
+//        Если бомба упала за границу экрана y > height бомба тоже умирает.
+//
+//        Напиши метод checkRockets()
+//        Надо проверить - не пересеклись между собой какая-нибудь ракета и НЛО
+//        Если пересеклись - ракета и нло умирают  - die()
+//        Если ракета улетела за границу экрана y < 0, ракета тоже умирает.
+//
+//        Напиши метод removeDead()
+//        В это методе удали из списков ufos, rockets, bombs все мертвые объекты (isAlive() == false)
+import java.awt.event.KeyEvent;
+import java.util.*;
 
 /**
- * Created by Andriana_Yarmoliuk on 10/28/2016.
+ * Главный класс игры - Космос (Space)
  */
 public class Space
 {
-    int width;
-    int heigh;
-    SpaceShip ship;
-    ArrayList<Ufo> ufos = new ArrayList<>();
-    ArrayList<Rocket> rockets = new ArrayList<>();
-    ArrayList<Bomb> bombs = new ArrayList<>();
+    //Ширина и высота игрового поля
+    private int width;
+    private int height;
+    private int createUfosCount = 0;
+    //Космический корабль
+    private SpaceShip ship;
+    //Список НЛО
+    private ArrayList<Ufo> ufos = new ArrayList<Ufo>();
+    //Список бомб
+    private ArrayList<Bomb> bombs = new ArrayList<Bomb>();
+    //Список ракет
+    private ArrayList<Rocket> rockets = new ArrayList<Rocket>();
 
-    public Space(int width, int heigh)
+    public Space(int width, int height)
     {
         this.width = width;
-        this.heigh = heigh;
+        this.height = height;
     }
 
-    public int getWidth()
+      /**
+     *  Основной цикл программы.
+     *  Тут происходят все важные действия
+     */
+    public void run()
     {
-        return width;
+        //Создаем холст для отрисовки.
+        Canvas canvas = new Canvas(width, height);
+
+        //Создаем объект "наблюдатель за клавиатурой" и стартуем его.
+        KeyboardObserver keyboardObserver = new KeyboardObserver();
+        keyboardObserver.start();
+
+        //Игра работает, пока корабль жив
+        while (ship.isAlive())
+        {
+            //"наблюдатель" содержит события о нажатии клавиш?
+            if (keyboardObserver.hasKeyEvents())
+            {
+                KeyEvent event = keyboardObserver.getEventFromTop();
+                //Если "стрелка влево" - сдвинуть фигурку влево
+                System.out.print(event.getKeyCode());
+                if (event.getKeyCode() == KeyEvent.VK_LEFT)
+                    ship.moveLeft();
+                //Если "стрелка вправо" - сдвинуть фигурку вправо
+                else if (event.getKeyCode() == KeyEvent.VK_RIGHT)
+                    ship.moveRight();
+                //Если "пробел" - запускаем шарик
+                else if (event.getKeyCode() == KeyEvent.VK_SPACE)
+                    ship.fire();
+            }
+
+            //двигаем все объекты игры
+            moveAllItems();
+
+            //проверяем столкновения
+            checkBombs();
+            checkRockets();
+            //удаляем умершие объекты из списков
+            removeDead();
+
+            //Создаем НЛО (1 раз в 10 ходов)
+            createUfo();
+
+            //Отрисовываем все объекты на холст, а холст выводим на экран
+            canvas.clear();
+            draw(canvas);
+            canvas.print();
+
+            //Пауза 300 миллисекунд
+            Space.sleep(300);
+        }
+
+        //Выводим сообщение "Game Over"
+        System.out.println("Game Over!");
     }
 
-    public int getHeigh()
+    /**
+     * Двигаем все объекты игры
+     */
+    public void moveAllItems()
     {
-        return heigh;
+        for (BaseObject obj:getAllItems())
+        {
+            obj.move();
+        }
+        //нужно получить список всех игрвых объектов и у каждого вызвать метод move().
     }
+
+    /**
+     * Метод возвращает общий список, который содержит все объекты игры
+     */
+    public List<BaseObject> getAllItems()
+    {
+        List<BaseObject> allItems = new ArrayList<>();
+        allItems.add(ship);
+        allItems.addAll(ufos);
+        allItems.addAll(bombs);
+        allItems.addAll(rockets);
+
+        return allItems;
+        //нужно создать новый список и положить в него все игровые объекты.
+    }
+
+    /**
+     * Создаем новый НЛО. 1 раз на 10 вызовов.
+     */
+    public void createUfo()
+    {
+        if (ufos.size() > 0) return;
+        int random10 = (int) (Math.random() * 10);
+        if (random10 == 0)
+        {
+            double x = Math.random() * 20;
+            double y = Math.random() * 10;
+            ufos.add(new Ufo(x, y));
+        }
+    }
+
+    /**
+     * Проверяем бомбы.
+     * а) столкновение с кораблем (бомба и корабль умирают)
+     * б) падение ниже края игрового поля (бомба умирает)
+     */
+    public void checkBombs()
+    {
+        for (Bomb bomb : bombs)
+        {
+            if (ship.isIntersec(bomb))
+            {
+                ship.die();
+                bomb.die();
+            }
+            if (bomb.getY() >= height)
+                bomb.die();
+        }
+        //тут нужно проверить все возможные столкновения для каждой бомбы.
+    }
+
+    /**
+     * Проверяем рокеты.
+     * а) столкновение с НЛО (ракета и НЛО умирают)
+     * б) вылет выше края игрового поля (ракета умирает)
+     */
+    public void checkRockets()
+    {
+        for (Rocket rocket : rockets)
+        {
+            for (Ufo ufo : ufos)
+            {
+                if (ufo.isIntersec(rocket))
+                {
+                    ufo.die();
+                    rocket.die();
+                }
+            }
+            if (rocket.getY() <= 0)
+                rocket.die();
+        }
+        //тут нужно проверить все возможные столкновения для каждой ракеты.
+    }
+
+    /**
+     * Удаляем умерсшие объекты (бомбы, ракеты, НЛО) из списков
+     */
+    public void removeDead()
+    {
+        for (BaseObject object : new ArrayList<BaseObject>(bombs))
+        {
+            if (!object.isAlive())
+                bombs.remove(object);
+        }
+        for (BaseObject object : new ArrayList<BaseObject>(rockets))
+        {
+            if (!object.isAlive())
+                rockets.remove(object);
+        }
+        for (BaseObject object : new ArrayList<BaseObject>(ufos))
+        {
+            if (!object.isAlive())
+                ufos.remove(object);
+        }
+        //тут нужно удалить все умершие объекты из списков.
+        //Кроме космического корабля - по нему определяем ищет еще игра или нет.
+    }
+
+    /**
+     * Отрисовка всех объектов игры:
+     * а) заполняем весь холст точесками.
+     * б) отрисовываем все объекты на холст.
+     */
+    public void draw(Canvas canvas)
+    {
+        //тут нужно отрисовать все объекты игры
+    }
+
 
     public SpaceShip getShip()
     {
@@ -44,9 +235,14 @@ public class Space
         return ufos;
     }
 
-    public ArrayList<Rocket> getRockets()
+    public int getWidth()
     {
-        return rockets;
+        return width;
+    }
+
+    public int getHeight()
+    {
+        return height;
     }
 
     public ArrayList<Bomb> getBombs()
@@ -54,20 +250,31 @@ public class Space
         return bombs;
     }
 
-    public void run(){
-
-    }
-
-    public void draw(){
-
-    }
-
-    public void sleep(int ms){
-
-    }
-
-    public static void main(String[] args)
+    public ArrayList<Rocket> getRockets()
     {
+        return rockets;
+    }
 
+    public static Space game;
+
+    public static void main(String[] args) throws Exception
+    {
+        game = new Space(20, 20);
+        game.setShip(new SpaceShip(10, 16));
+        game.run();
+    }
+
+    /**
+     * Метод делает паузу длинной delay миллисекунд.
+     */
+    public static void sleep(int delay)
+    {
+        try
+        {
+            Thread.sleep(delay);
+        }
+        catch (InterruptedException e)
+        {
+        }
     }
 }
