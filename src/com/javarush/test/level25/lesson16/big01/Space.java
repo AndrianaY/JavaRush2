@@ -1,23 +1,8 @@
 package com.javarush.test.level25.lesson16.big01;
-//И еще немного:
-//
-//        Напиши метод createUfo()
-//        Если список НЛО пуст - создай один корабль в центре сверху.
-//
-//        Напиши метод checkBombs()
-//        Надо проверить - не пересеклись между собой какая-нибудь бомба и корабль.
-//        Если пересеклись - корабль и бомба умирают  - die()
-//        Если бомба упала за границу экрана y > height бомба тоже умирает.
-//
-//        Напиши метод checkRockets()
-//        Надо проверить - не пересеклись между собой какая-нибудь ракета и НЛО
-//        Если пересеклись - ракета и нло умирают  - die()
-//        Если ракета улетела за границу экрана y < 0, ракета тоже умирает.
-//
-//        Напиши метод removeDead()
-//        В это методе удали из списков ufos, rockets, bombs все мертвые объекты (isAlive() == false)
+
 import java.awt.event.KeyEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Главный класс игры - Космос (Space)
@@ -27,7 +12,7 @@ public class Space
     //Ширина и высота игрового поля
     private int width;
     private int height;
-    private int createUfosCount = 0;
+
     //Космический корабль
     private SpaceShip ship;
     //Список НЛО
@@ -43,7 +28,7 @@ public class Space
         this.height = height;
     }
 
-      /**
+    /**
      *  Основной цикл программы.
      *  Тут происходят все важные действия
      */
@@ -105,11 +90,10 @@ public class Space
      */
     public void moveAllItems()
     {
-        for (BaseObject obj:getAllItems())
+        for (BaseObject object : getAllItems())
         {
-            obj.move();
+            object.move();
         }
-        //нужно получить список всех игрвых объектов и у каждого вызвать метод move().
     }
 
     /**
@@ -117,14 +101,11 @@ public class Space
      */
     public List<BaseObject> getAllItems()
     {
-        List<BaseObject> allItems = new ArrayList<>();
-        allItems.add(ship);
-        allItems.addAll(ufos);
-        allItems.addAll(bombs);
-        allItems.addAll(rockets);
-
-        return allItems;
-        //нужно создать новый список и положить в него все игровые объекты.
+        ArrayList<BaseObject> list = new ArrayList<BaseObject>(ufos);
+        list.add(ship);
+        list.addAll(bombs);
+        list.addAll(rockets);
+        return list;
     }
 
     /**
@@ -133,6 +114,7 @@ public class Space
     public void createUfo()
     {
         if (ufos.size() > 0) return;
+
         int random10 = (int) (Math.random() * 10);
         if (random10 == 0)
         {
@@ -156,10 +138,10 @@ public class Space
                 ship.die();
                 bomb.die();
             }
+
             if (bomb.getY() >= height)
                 bomb.die();
         }
-        //тут нужно проверить все возможные столкновения для каждой бомбы.
     }
 
     /**
@@ -179,10 +161,10 @@ public class Space
                     rocket.die();
                 }
             }
+
             if (rocket.getY() <= 0)
                 rocket.die();
         }
-        //тут нужно проверить все возможные столкновения для каждой ракеты.
     }
 
     /**
@@ -195,18 +177,18 @@ public class Space
             if (!object.isAlive())
                 bombs.remove(object);
         }
+
         for (BaseObject object : new ArrayList<BaseObject>(rockets))
         {
             if (!object.isAlive())
                 rockets.remove(object);
         }
+
         for (BaseObject object : new ArrayList<BaseObject>(ufos))
         {
             if (!object.isAlive())
                 ufos.remove(object);
         }
-        //тут нужно удалить все умершие объекты из списков.
-        //Кроме космического корабля - по нему определяем ищет еще игра или нет.
     }
 
     /**
@@ -216,7 +198,31 @@ public class Space
      */
     public void draw(Canvas canvas)
     {
-        //тут нужно отрисовать все объекты игры
+        //draw game
+        for (int i = 0; i < width + 2; i++)
+        {
+            for (int j = 0; j < height + 2; j++)
+            {
+                canvas.setPoint(i, j, '.');
+            }
+        }
+
+        for (int i = 0; i < width + 2; i++)
+        {
+            canvas.setPoint(i, 0, '-');
+            canvas.setPoint(i, height + 1, '-');
+        }
+
+        for (int i = 0; i < height + 2; i++)
+        {
+            canvas.setPoint(0, i, '|');
+            canvas.setPoint(width + 1, i, '|');
+        }
+
+        for (BaseObject object : getAllItems())
+        {
+            object.draw(canvas);
+        }
     }
 
 

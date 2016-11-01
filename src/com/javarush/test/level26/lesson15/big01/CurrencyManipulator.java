@@ -31,7 +31,16 @@ public class CurrencyManipulator
 
         return currencyCode;
     }
-
+    public int getTotalAmount(){
+        Integer amount = 0;
+        for (Map.Entry entry: denominations.entrySet())
+        {
+            int denoms = (int) entry.getKey();
+            int count = (int) entry.getValue();
+            amount = amount + (denoms * count);
+        }
+        return amount;
+    }
     private String currencyCode;
     private Map<Integer, Integer> denominations;
 

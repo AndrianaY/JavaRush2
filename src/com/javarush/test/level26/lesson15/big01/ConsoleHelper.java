@@ -36,13 +36,30 @@ public class ConsoleHelper
             }
         }
     }
-
+    public static Operation askOperation(){
+        while (true){
+            writeMessage("write operation number 1 - INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT");
+            String operation = readString();
+            try
+            {
+                if (Integer.parseInt(operation) > 0 && Integer.parseInt(operation) <= 4)
+                    return Operation.getAllowableOperationByOrdinal(Integer.parseInt(operation));
+                else
+                {
+                    writeMessage("enter operation again1 - INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT ");
+                }
+            }
+            catch (Exception e){
+                writeMessage("enter operation again1 - INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT ");
+            }
+        }
+    }
     public static String askCurrencyCode(){
         while (true) {
-            writeMessage("Введите код валюты: ");
+            writeMessage("Enter currency code");
             String str = readString();
             if (str.length() != 3) {
-                writeMessage("Неверный код валюты! Введите заново.");
+                writeMessage("Wrong code. Try again");
             } else {
                 return str.toUpperCase();
             }
@@ -51,17 +68,17 @@ public class ConsoleHelper
 
     public static String[] getValidTwoDigits(String currencyCode){
         while (true) {
-            writeMessage("Введите два целых положительных числа. Первое - номинал, второе - количество банкнот: ");
+            writeMessage("Enter denomination and count ");
             String userInput = readString();
             String[] strmas = userInput.split(" ");
             try {
                 if (strmas.length == 2 && Integer.parseInt(strmas[0]) >= 0 && Integer.parseInt(strmas[1]) >= 0) {
                     return strmas;
                 } else {
-                    writeMessage("Введены неверные данные, повторите ввод!");
+                    writeMessage("Wrong code. Try again");
                 }
             }catch (NumberFormatException ex) {
-                writeMessage("Введены неверные данные, повторите ввод!");
+                writeMessage("Wrong code. Try again");
             }
         }
     }

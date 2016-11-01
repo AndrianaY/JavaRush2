@@ -7,21 +7,24 @@ import java.util.Locale;
  */
 public class CashMachine
 {
-
-
-    public static void main(String[] args)
-    {Locale.setDefault(Locale.ENGLISH);
+    public static void main(String[] args){
+        Locale.setDefault(Locale.ENGLISH);
         Operation op = Operation.DEPOSIT;
+        CurrencyManipulator manipulator = null;
         switch (op) {
             case DEPOSIT: {
                 try {
                     String curCode = ConsoleHelper.askCurrencyCode();
                     String[] str = ConsoleHelper.getValidTwoDigits(curCode);
-                    CurrencyManipulatorFactory.getManipulatorByCurrencyCode(curCode).addAmount(Integer.parseInt(str[0]), Integer.parseInt(str[1]));
+                    manipulator = CurrencyManipulatorFactory.getManipulatorByCurrencyCode(curCode);
+                    manipulator.addAmount(Integer.parseInt(str[0]), Integer.parseInt(str[1]));
                 } catch (NumberFormatException ex) {
                     ex.printStackTrace();
                 }
             }
         }
+        manipulator.getTotalAmount();
+        ConsoleHelper.askOperation();
+        
     }
 }
