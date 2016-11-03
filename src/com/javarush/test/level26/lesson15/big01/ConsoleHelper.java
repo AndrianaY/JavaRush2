@@ -1,13 +1,6 @@
 package com.javarush.test.level26.lesson15.big01;
-//1. Создадим в ConsoleHelper два статических метода:
-//        1.1 writeMessage(String message), который будет писать в консоль наше сообщение
-//        1.2 String readString(), который будет считывать с консоли строку и возвращать ее.
-//        Если возникнет какое-то исключение при работе с консолью, то перехватим его и не будем обрабатывать.
-//        Кстати, создадим только один экземпляр BufferedReader-а
-//
-//        2. Создадим пакет exception, в который поместим два checked исключения:
-//        2.1 InterruptOperationException будем кидать, когда нужно прервать текущую операцию и выйти из приложения
-//        2.2 NotEnoughMoneyException будем кидать, когда не сможем выдать запрашиваемую сумму
+
+import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,18 +18,25 @@ public class ConsoleHelper
     }
 
 
-    public static String readString () {
+    public static String readString () throws InterruptOperationException
+    {
+        String str;
         while (true) {
             try {
-                return br.readLine();
+                str = br.readLine();
+                if (str.equalsIgnoreCase("exit"))
+                    throw new InterruptOperationException();
+                return str;
             }
             catch (IOException e) {
-                e.printStackTrace();
-                continue;
+
             }
+
         }
     }
-    public static Operation askOperation(){
+
+    public static Operation askOperation() throws InterruptOperationException
+    {
         while (true){
             writeMessage("write operation number 1 - INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT");
             String operation = readString();
@@ -46,15 +46,16 @@ public class ConsoleHelper
                     return Operation.getAllowableOperationByOrdinal(Integer.parseInt(operation));
                 else
                 {
-                    writeMessage("enter operation again1 - INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT ");
+                    writeMessage("enter operation again 1 - INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT ");
                 }
             }
             catch (Exception e){
-                writeMessage("enter operation again1 - INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT ");
+                writeMessage("enter operation again 1 - INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT ");
             }
         }
     }
-    public static String askCurrencyCode(){
+    public static String askCurrencyCode() throws InterruptOperationException
+    {
         while (true) {
             writeMessage("Enter currency code");
             String str = readString();
@@ -66,7 +67,8 @@ public class ConsoleHelper
         }
     }
 
-    public static String[] getValidTwoDigits(String currencyCode){
+    public static String[] getValidTwoDigits(String currencyCode) throws InterruptOperationException
+    {
         while (true) {
             writeMessage("Enter denomination and count ");
             String userInput = readString();
@@ -75,10 +77,10 @@ public class ConsoleHelper
                 if (strmas.length == 2 && Integer.parseInt(strmas[0]) >= 0 && Integer.parseInt(strmas[1]) >= 0) {
                     return strmas;
                 } else {
-                    writeMessage("Wrong code. Try again");
+                    writeMessage("Wrong data. Try again");
                 }
             }catch (NumberFormatException ex) {
-                writeMessage("Wrong code. Try again");
+                writeMessage("Wrong data. Try again");
             }
         }
     }

@@ -265,7 +265,7 @@ public class Space
 
     public static void main(String[] args) throws Exception
     {
-        game = new Space(20, 20);
+        game = new Space(200, 200);
         game.setShip(new SpaceShip(10, 16));
         game.run();
     }

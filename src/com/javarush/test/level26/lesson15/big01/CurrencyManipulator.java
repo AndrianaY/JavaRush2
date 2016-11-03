@@ -1,19 +1,11 @@
 package com.javarush.test.level26.lesson15.big01;
-//1. Создадим класс CurrencyManipulator, который будет хранить всю информацию про выбранную валюту.
-//        String currencyCode - код валюты, например, USD. Состоит из трех букв
-//        Map<Integer, Integer> denominations - это Map<номинал, количество>
-//Чтобы можно было посмотреть, к какой валюте относится манипулятор, добавим геттер для currencyCode
-//        Очевидно, что манипулятор никак не может функционировать без названия валюты,
-//        поэтому добавим конструктор с этим параметром и проинициализируем currencyCode
-//
-//        2. Валют может быть несколько, поэтому нам понадобится фабрика, которая будет создавать и хранить манипуляторы.
-//        Создадим класс CurrencyManipulatorFactory со статическим методом getManipulatorByCurrencyCode(String currencyCode).
-//        В этом методе будем создавать нужный манипулятор, если он еще не существует, либо возвращать ранее созданный.
-//        Подумайте, где лучше хранить все манипуляторы.
-//        Сделайте так, чтобы невозможно было создавать объекты CurrencyManipulatorFactory класса
 
+import com.javarush.test.level26.lesson15.big01.exception.NotEnoughMoneyException;
+
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by Andriana_Yarmoliuk on 11/1/2016.
@@ -26,9 +18,82 @@ public class CurrencyManipulator
         denominations = new HashMap<>();
     }
 
+    public boolean hasMoney(){
+        if (denominations.isEmpty()) return false;
+        else {
+            for (Map.Entry<Integer,Integer> pair : denominations.entrySet()){
+                if (pair.getValue()!=0) return true;
+            }
+            return false;
+        }
+    }
+    public boolean isAmountAvailable(int expectedAmount){
+        return getTotalAmount() >= expectedAmount;
+    }
+// 2. Логика основного метода withdrawAmount:
+//        2.1. Внимание!!! Метод withdrawAmount должен возвращать минимальное количество банкнот, которыми набирается запрашиваемая сумма.
+//        Используйте Жадный алгоритм (use google).
+//        Если есть несколько вариантов, то использовать тот, в котором максимальное количество банкнот высшего номинала.
+//        Если для суммы 600 результат - три банкноты: 500 + 50 + 50 = 200 + 200 + 200, то выдать первый вариант.
+//        Пример, надо выдать 600
+//        В манипуляторе есть следующие банкноты:
+//        500 - 2
+//        200 - 3
+//        100 - 1
+//        50 - 12
+//        Результат должен быть таким:
+//        500 - 1
+//        100 - 1
+//        т.е. всего две банкноты (это минимальное количество банкнот) номиналом 500 и 100.
+//
+//        2.2. Мы же не можем одни и те же банкноты выдавать несколько раз, поэтому
+//        если мы нашли вариант выдачи денег (п.2.1. успешен), то вычесть все эти банкноты из карты в манипуляторе.
+//
+//        2.3. метод withdrawAmount должен кидать NotEnoughMoneyException, если купюрами невозможно выдать запрашиваемую сумму.
+//        Пример, надо выдать 600
+//        В манипуляторе есть следующие банкноты:
+//        500 - 2
+//        200 - 2
+//        Результат - данными банкнотами невозможно выдать запрашиваемую сумму. Кинуть исключение.
+//        Не забудьте, что в некоторых случаях картой кидается ConcurrentModificationException.
+
+    public Map<Integer, Integer> withdrawAmount(int expectedAmount)throws NotEnoughMoneyException{
+
+        int amount, nom, count, diff; //q - вспомогательная переменная в цикле
+        amount = expectedAmount;
+        count=0; //количество купюр,  ему по умолчанию присваивается 0
+        diff=0;
+        TreeMap<Integer, Integer> sorted = new TreeMap<>(Collections.reverseOrder());
+        sorted.putAll(denominations);
+        TreeMap<Integer, Integer> result = new TreeMap<>(Collections.reverseOrder());
+
+        for(Map.Entry<Integer, Integer> m: sorted.entrySet()) //цикл перебирает все элементы массива, от большего к меньшему
+        {
+            nom = m.getKey();
+            count += amount / nom; //считаем, сколько раз входит купюра в сумму
+            while (true){
+                if (count > m.getValue())
+                {
+                    count--;
+                    diff++;
+                }
+                else
+                    break;
+            }
+            amount = (amount % nom) + diff * nom;  //сумме присваивается остаток от деления на данную купюр
+            result.put(nom, count);
+        }
+        if(amount > 0) //проверяем наличие остатка, который банкомат не сможет выдать
+            throw new NotEnoughMoneyException();
+        for (Map.Entry<Integer, Integer> map:result.entrySet())
+        {
+            denominations.put(map.getKey(), (denominations.get(map.getKey()) - map.getValue())) ;
+        }
+        return result;
+    }
+
     public String getCurrencyCode()
     {
-
         return currencyCode;
     }
     public int getTotalAmount(){
@@ -44,12 +109,15 @@ public class CurrencyManipulator
     private String currencyCode;
     private Map<Integer, Integer> denominations;
 
-    public void addAmount(int denomination, int count){
-        if(denominations.containsKey(denomination)){
-            denominations.put(denomination, denominations.get(denomination) + count);
+    public void addAmount(int denomination, int count)
+    {
+        if (denominations==null)
+            denominations= new HashMap<>();
+        if (denominations.keySet().contains(denomination))
+        {
+            denominations.put(denomination,denominations.get(denomination)+count);
         }
-        else{
-            denominations.put(denomination, count);
-        }
+        else
+            denominations.put(denomination,count);
     }
 }

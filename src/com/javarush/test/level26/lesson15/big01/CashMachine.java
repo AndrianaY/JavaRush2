@@ -1,5 +1,8 @@
 package com.javarush.test.level26.lesson15.big01;
 
+import com.javarush.test.level26.lesson15.big01.command.CommandExecutor;
+import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
+
 import java.util.Locale;
 
 /**
@@ -8,23 +11,17 @@ import java.util.Locale;
 public class CashMachine
 {
     public static void main(String[] args){
-        Locale.setDefault(Locale.ENGLISH);
-        Operation op = Operation.DEPOSIT;
-        CurrencyManipulator manipulator = null;
-        switch (op) {
-            case DEPOSIT: {
-                try {
-                    String curCode = ConsoleHelper.askCurrencyCode();
-                    String[] str = ConsoleHelper.getValidTwoDigits(curCode);
-                    manipulator = CurrencyManipulatorFactory.getManipulatorByCurrencyCode(curCode);
-                    manipulator.addAmount(Integer.parseInt(str[0]), Integer.parseInt(str[1]));
-                } catch (NumberFormatException ex) {
-                    ex.printStackTrace();
-                }
+        try{
+            Locale.setDefault(Locale.ENGLISH);
+            Operation operation;
+            do{
+                operation = ConsoleHelper.askOperation();
+                CommandExecutor.execute(operation);
             }
+            while (operation != Operation.EXIT);
         }
-        manipulator.getTotalAmount();
-        ConsoleHelper.askOperation();
-        
+        catch (InterruptOperationException e){
+            ConsoleHelper.writeMessage("bye");
+        }
     }
 }
