@@ -16,34 +16,8 @@ public class Solution implements Action {
     private Action solutionAction = new Action() {
         //!!!!! Changes can be here
         //!!!!! Изменения могут быть тут
+
         public void someAction() {
-            new Action(){
-                public void someAction(){
-                    if (param>0)
-                    {
-                        for (; param >=1; param--) System.out.println("* " + param);
-                        System.out.print("* ");
-                        new FirstClass()
-                        {
-                            public Action getDependantAction()
-                            {
-                                return null;
-                            }
-                        }.someAction();
-                        param=0;
-                        System.out.print("* ");
-                        new SecondClass().someAction();
-                        System.out.println("* "+SecondClass.SPECIFIC_ACTION_FOR_ANONYMOUS_SECOND_CLASS_PARAM.substring(1)+param);
-                    }
-                    else
-                    {
-                        System.out.print("* ");
-                        new SecondClass().someAction();
-                        System.out.println("* "+SecondClass.SPECIFIC_ACTION_FOR_ANONYMOUS_SECOND_CLASS_PARAM.substring(1)+param);
-                    }
-                    System.out.print("* ");
-                }
-            }.someAction();
             //!!!!! All changes have to be here
             //!!!!! Все изменения должны быть только тут
         }

@@ -2,13 +2,15 @@ package com.javarush.test.level27.lesson15.big01;
 
 import com.javarush.test.level27.lesson15.big01.kitchen.Order;
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * Created by Andriana_Yarmoliuk on 11/3/2016.
  */
-public class Tablet
+public class Tablet implements Observer
 {
     public int getNumber()
     {
@@ -33,5 +35,11 @@ public class Tablet
         {
             logger.log(Level.SEVERE, "Console is unavailable.");
         }
+    }
+
+    @Override
+    public void update(Observable o, Object arg)
+    {
+
     }
 }
