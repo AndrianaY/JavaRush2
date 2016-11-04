@@ -40,4 +40,18 @@ public class Order
     {
         return dishes.isEmpty() ? "" : String.format("Your order: %s of Tablet{number=%d}", dishes, tablet.getNumber());
     }
+
+    public int getTotalCookingTime(){
+        int time = 0;
+        for (Dish d:dishes)
+        {
+            time += d.getDuration();
+        }
+        return time;
+    }
+
+    public boolean isEmpty(){
+        return dishes.isEmpty();
+    }
+
 }

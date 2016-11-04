@@ -1,12 +1,17 @@
 package com.javarush.test.level27.lesson15.big01.kitchen;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
+import com.javarush.test.level27.lesson15.big01.ConsoleHelper;
+import java.util.Observable;
+import java.util.Observer;
+//3. Метод void update(Observable observable, Object arg), который необходимо реализовать, принимает два параметра.
+//        -observable - объект, который отправил нам значение
+//        -arg - само значение, в нашем случае - это объект Order
+//        На данном этапе мы сымитируем обработку и выведем в консоль "Start cooking - " + order
 
 /**
  * Created by Andriana on 04.11.2016.
  */
-public class Cook implements Observable
+public class Cook extends Observable implements Observer
 {
     private String name;
 
@@ -22,14 +27,10 @@ public class Cook implements Observable
     }
 
     @Override
-    public void addListener(InvalidationListener listener)
+    public void update(Observable o, Object order)
     {
-
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener)
-    {
-
+        ConsoleHelper.writeMessage("Start cooking - " + order + ", cooking time " + ((Order) order).getTotalCookingTime() + "min");
+        setChanged();
+        notifyObservers(order);
     }
 }

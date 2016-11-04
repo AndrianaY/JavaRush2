@@ -30,7 +30,7 @@ public class ConsoleHelper
                 try {
                     list.add(Dish.valueOf(nextDish));
                 } catch (IllegalArgumentException e) {
-                    writeMessage("No such dish: " + nextDish);
+                    writeMessage(nextDish + " is not detected");
                 }
             }
         }
