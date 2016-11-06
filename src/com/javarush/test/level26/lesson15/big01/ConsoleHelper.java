@@ -1,7 +1,6 @@
 package com.javarush.test.level26.lesson15.big01;
 
 import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,8 +15,6 @@ public class ConsoleHelper
     {
         System.out.println(message);
     }
-
-
     public static String readString () throws InterruptOperationException
     {
         String str;
@@ -29,16 +26,14 @@ public class ConsoleHelper
                 return str;
             }
             catch (IOException e) {
-
             }
-
         }
     }
 
     public static Operation askOperation() throws InterruptOperationException
     {
+        writeMessage("write operation number 1 - INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT");
         while (true){
-            writeMessage("write operation number 1 - INFO, 2 - DEPOSIT, 3 - WITHDRAW, 4 - EXIT");
             String operation = readString();
             try
             {
