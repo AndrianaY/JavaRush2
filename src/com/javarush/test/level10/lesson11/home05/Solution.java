@@ -42,6 +42,24 @@ public class Solution
 
 
         //напишите тут ваш код
+        ArrayList<Integer> counList = new ArrayList<Integer>();
+        char[] cl;
+        int count;
+        for (int i = 0; i < alphabet.size(); i++) {
+            count = 0;
+            for (int j = 0; j < list.size(); j++) {
+                cl = list.get(j).toCharArray();
+                for (int k = 0; k < cl.length; k++) {
+                    if(String.valueOf(cl[k]).equals(String.valueOf(alphabet.get(i)))) {
+                        count++;
+                    }
+                }
+            }
+            counList.add(count);
+        }
+        for (int i = 0; i < alphabet.size(); i++) {
+            System.out.println(alphabet.get(i) + " " + counList.get(i));
+        }
     }
 
 }

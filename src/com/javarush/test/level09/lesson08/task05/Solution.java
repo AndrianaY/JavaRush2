@@ -16,19 +16,12 @@ public class Solution
         try
         {
             obj.method1();
-        }
-        catch (NullPointerException e)
-        {
             obj.method2();
-        }
-        catch (IndexOutOfBoundsException e){
             obj.method3();
         }
-        catch (NumberFormatException e){
-            e.fillInStackTrace();
-        }
-        finally
+        catch (Exception e)
         {
+            printStack(e);
         }
     }
 

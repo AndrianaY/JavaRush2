@@ -10,29 +10,45 @@ package com.javarush.test.level24.lesson04.home02;
 */
 public class Solution implements Action {
     public static int countActionObjects;
-
     private int param;
-
     private Action solutionAction = new Action() {
         //!!!!! Changes can be here
         //!!!!! Изменения могут быть тут
-
         public void someAction() {
+            new Action(){
+                public void someAction(){
+                    if (param>0)
+                    {
+                        for (; param >= 1; param--) { System.out.println(param); }
+                        new FirstClass()
+                        {
+                            public Action getDependantAction()
+                            {
+                                return null;
+                            }
+                        }.someAction();
+                        param=0;
+                        new SecondClass().someAction();
+                        System.out.println(SecondClass.SPECIFIC_ACTION_FOR_ANONYMOUS_SECOND_CLASS_PARAM.substring(1)+param);
+                    }
+                    else
+                    {
+                        new SecondClass().someAction();
+                        System.out.println(SecondClass.SPECIFIC_ACTION_FOR_ANONYMOUS_SECOND_CLASS_PARAM+param);
+                    }
+                }
+            }.someAction();
             //!!!!! All changes have to be here
             //!!!!! Все изменения должны быть только тут
         }
     };
-
-
     public Solution(int param) {
         this.param = param;
     }
-
     @Override
     public void someAction() {
         solutionAction.someAction();
     }
-
     /**
      * 5
      * 4
@@ -51,7 +67,6 @@ public class Solution implements Action {
         Solution solution = new Solution(5);
         solution.someAction();
         System.out.println("Count of created Action objects is " + countActionObjects);
-
         solution = new Solution(-1);
         solution.someAction();
         System.out.println("Count of created Action objects is " + countActionObjects);

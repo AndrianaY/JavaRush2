@@ -22,7 +22,6 @@ public class Tablet extends Observable
 
     private final int number;
     public static Logger logger = Logger.getLogger(Tablet.class.getName());
-    AdvertisementManager manager;
 
 
     @Override
@@ -39,34 +38,23 @@ public class Tablet extends Observable
 
     }
 
-    public void createOrder()
-    {
-        try
-        {
+    public void createOrder(){
+        try {
             Order order = new Order(this);
             ConsoleHelper.writeMessage(order.toString());
-
-            setChanged();
-            if (!order.isEmpty())
-            {
-                manager = new AdvertisementManager(order.getTotalCookingTime());
-                try
-                {
+            if (!order.isEmpty()){
+                setChanged();
+                notifyObservers(order);
+                try {
+                    AdvertisementManager manager = new AdvertisementManager(order.getTotalCookingTime() * 60);
                     manager.processVideos();
-                }
-                catch (NoVideoAvailableException e)
-                {
+                } catch (NoVideoAvailableException e) {
                     logger.log(Level.INFO, "No video is available for the order " + order);
                 }
-                notifyObservers(order);
-
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.log(Level.SEVERE, "Console is unavailable.");
         }
-
     }
 
 }
