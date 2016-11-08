@@ -8,21 +8,33 @@ package com.javarush.test.level13.lesson11.home04;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Solution
 {
     public static void main(String[] args) throws IOException
     {
-        BufferedReader br = new BufferedReader (new InputStreamReader(System.in)) ;
-        String fileName = br.readLine() ;
-        Writer w = new FileWriter(fileName) ;
-        String buffer = "";
-        while(!buffer.contains("exit"))
+        Scanner scanner = new Scanner(System.in);
+        String fileName = scanner.nextLine();
+        ArrayList<String> strings = new ArrayList<String>();
+        while (true)
         {
-            buffer = br.readLine();
-            w.write(buffer);
+            String string = scanner.nextLine();
+            if(!string.equals("exit"))
+                strings.add(string);
+            else
+                break;
         }
-        w.close() ;
-        br.close();
+        FileWriter fileWriter = new FileWriter(fileName);
+        for (int a = 0; a < strings.size(); a++)
+        {
+            byte[] byteArray = strings.get(a).getBytes();
+            String lineSeparator = System.lineSeparator();
+            fileWriter.write(strings.get(a));
+            fileWriter.write(lineSeparator);
+            fileWriter.flush();
+        }
+        fileWriter.write("exit");
+        fileWriter.close();
     }
 }
