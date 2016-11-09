@@ -22,7 +22,7 @@ public class Solution {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    doExpensiveOperation(id.incrementAndGet());
+//                    doExpensiveOperation(id.incrementAndGet());
                 }
             });
         }

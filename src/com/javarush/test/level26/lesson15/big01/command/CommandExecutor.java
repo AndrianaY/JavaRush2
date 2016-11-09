@@ -2,7 +2,6 @@ package com.javarush.test.level26.lesson15.big01.command;
 
 import com.javarush.test.level26.lesson15.big01.Operation;
 import com.javarush.test.level26.lesson15.big01.exception.InterruptOperationException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +16,8 @@ public class CommandExecutor
         put(Operation.DEPOSIT, new DepositCommand());
         put(Operation.WITHDRAW, new WithdrawCommand());
         put(Operation.EXIT, new ExitCommand());
+        put(Operation.LOGIN, new LoginCommand());
+
     }};
     public static final void execute(Operation operation) throws InterruptOperationException
     {

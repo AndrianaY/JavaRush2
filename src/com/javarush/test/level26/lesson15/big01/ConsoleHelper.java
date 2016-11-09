@@ -15,18 +15,22 @@ public class ConsoleHelper
     {
         System.out.println(message);
     }
-    public static String readString () throws InterruptOperationException
+
+    public static String readString() throws InterruptOperationException
     {
-        String str;
-        while (true) {
-            try {
-                str = br.readLine();
-                if (str.equalsIgnoreCase("exit"))
-                    throw new InterruptOperationException();
-                return str;
+        String line;
+        while (true)
+        {
+            try
+            {
+                line = br.readLine();
             }
-            catch (IOException e) {
+            catch (IOException e)
+            {
+                continue;
             }
+            if (line.equalsIgnoreCase("EXIT")) throw new InterruptOperationException();
+            else return line;
         }
     }
 
