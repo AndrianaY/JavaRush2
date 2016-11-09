@@ -16,8 +16,6 @@ import java.util.List;
 public class HHStrategy implements Strategy
 {
      private static final String URL_FORMAT = "http://hh.ua/search/vacancy?text=java+%s&page=%d";
-    //private static final String URL_FORMAT = "http://javarush.ru/testdata/big28data.html";
-//    private static final String URL_FORMAT = "http://javarush.ru/testdata/big28data.html/search/vacancy?text=java+%s&page=%d";
     private static final String referrer = "https://hh.ua/search/vacancy?text=java+Kiev&page=1";
     private static final String userAgent = "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36";
     private static final int timeout = 5 * 1000;
